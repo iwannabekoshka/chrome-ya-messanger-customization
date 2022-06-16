@@ -1,0 +1,10 @@
+{
+  "name": "ya-messanger-customization",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+  },
+  "devDependencies": {
+    "prettier": "^2.7.1"
+  }
+}

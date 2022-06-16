@@ -1,0 +1,3 @@
+.yamb-message-user__name::after {
+    content: var(--after);
+}
