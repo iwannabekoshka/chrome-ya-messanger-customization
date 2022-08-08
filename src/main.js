@@ -14,6 +14,16 @@ const users = [
     color: "lightblue",
     after: "\\1F438",
   },
+  {
+    name: "Yaroslav Pavlov-Breycher",
+    color: "palevioletred",
+    after: "\\1F41E",
+  },
+  {
+    name: "Boris Novoselov",
+    color: "darkgoldenrod",
+    after: "\\1F37A",
+  },
 ];
 
 const observer = new MutationObserver(mutationRecords => {
