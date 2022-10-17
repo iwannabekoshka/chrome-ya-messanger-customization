@@ -4,17 +4,19 @@
 
 ### Подсветка чатов
 
-![preview](public/images/yam_customization.png)
+![preview_chats](public/images/yam_customization.png)
 
 ### Подсветка ников в чате
 
-![preview](public/images/yam_customization_in_chat.png)
+![preview_in_chats](public/images/yam_customization_in_chat.png)
 
 ## Установка
 
-1. Распаковать плагин в удобное для себя место
-2. Зайти в [плагины хрома](chrome://extensions/)
-3. Слева наверху нажать "Load unpacked", выбрать папку с плагином
+1. Скачать архив с плагином
+   ![preview_download](public/images/yam_customization_download.png)
+2. Распаковать плагин в удобное для себя место
+3. Зайти в [плагины хрома](chrome://extensions/)
+4. Слева наверху нажать "Load unpacked", выбрать папку с плагином
 
 ## Покраска ников + доп.текст или иконки справа от них
 
@@ -34,4 +36,4 @@
 
 При изменении юзеров надо снова зайти в [плагины хрома](chrome://extensions/), найти этот плагин и нажать на значок перезагрузки
 
-![preview](public/images/yam_customization_reload.png)
+![preview_reload](public/images/yam_customization_reload.png)
