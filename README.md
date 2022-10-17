@@ -16,7 +16,8 @@
    ![preview_download](public/images/yam_customization_download.png)
 2. Распаковать плагин в удобное для себя место
 3. Зайти в [плагины хрома](chrome://extensions/)
-4. Слева наверху нажать "Load unpacked", выбрать папку с плагином
+4. Включить режим разработчика, нажать "Load unpacked", выбрать папку с плагином
+   ![preview_download](public/images/yam_customization_upload.png)
 
 ## Покраска ников + доп.текст или иконки справа от них
 
