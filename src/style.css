@@ -1,3 +1,9 @@
 .yamb-message-user__name::after {
-    content: var(--after);
+  content: var(--after);
+}
+
+.yamb-chat-list-item__name::after {
+  content: var(--after);
+
+  margin-left: 3px;
 }
