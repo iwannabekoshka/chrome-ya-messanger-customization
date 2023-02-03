@@ -1,0 +1,48 @@
+.listItem {
+  display: flex;
+  gap: 7px;
+}
+
+.input {
+  width: 50px;
+  padding: 5px;
+
+  background-color: transparent;
+  color: var(--color, var(--common-text-primary, #fff));
+  border: none;
+}
+.input[name="name"] {
+  width: 100px;
+}
+
+.input:is(:focus, :active) {
+  outline: 1px solid var(--color, #fff);
+}
+
+.afterPreview {
+  min-width: 40px;
+}
+.afterPreview::after {
+  content: var(--after);
+}
+
+.btnRemove {
+  display: grid;
+  place-items: center;
+
+  align-self: center;
+  line-height: 0.8em;
+
+  aspect-ratio: 1/1;
+  padding: 4px;
+
+  background-color: orangered;
+  color: white;
+  outline: none;
+  border: none;
+
+  cursor: pointer;
+}
+.btnRemove:is(:focus, :active) {
+  outline: 1px solid var(--color, #fff);
+}

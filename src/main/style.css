@@ -1,0 +1,8 @@
+.yamb-message-user__name::after,
+.yamb-chat-list-item__name::after,
+.yamb-text.yamb-text_leading.yamb-text-container::after,
+.yamb-chat-list-item__author::after {
+  content: var(--after);
+
+  margin-left: 3px;
+}

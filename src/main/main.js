@@ -1,60 +1,4 @@
 /**
- * Люди и чаты для кастомизации
- * Для добавления человека/чата надо внутри квадратных скобок
- * добавить конструкцию вида:
- *
- * {
- *  name: "Constantin Potapov",
- *  color: "lightgreen",
- *  after: "\\1F408",
- * }
- *
- * Не забыть про запятые между объектами с людьми!
- */
-const USERS = [
-  {
-    name: "Constantin Potapov",
-    color: "lightgreen",
-    after: "\\1F408",
-  },
-  {
-    name: "Inna Pristyagina",
-    color: "plum",
-    after: "\\1F33B",
-  },
-  {
-    name: "Timur Makaev",
-    color: "lightblue",
-    after: "\\1F438",
-  },
-  {
-    name: "Yaroslav Pavlov-Breycher",
-    color: "palevioletred",
-    after: "\\1F41E",
-  },
-  {
-    name: "Boris Novoselov",
-    color: "darkgoldenrod",
-    after: "\\1F37A",
-  },
-  {
-    name: "Sergey Khrenov",
-    color: "gold",
-    after: "\\1F527",
-  },
-  {
-    name: "Ekaterina Melnikova",
-    color: "hotpink",
-    after: "\\1F60A",
-  },
-  {
-    name: "Yulia Lantratova",
-    color: "gray",
-    after: "\\1F480",
-  },
-];
-
-/**
  *
  *
  * Дальше идет кот, не нада его трогать
@@ -70,10 +14,47 @@ const USERS = [
  *
  */
 
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.type === "getLocalStorage") {
+    sendResponse({ data: localStorage });
+  }
+
+  if (request.type === "setLocalStorage") {
+    localStorage.setItem("users-customization", JSON.stringify(request.users));
+    customizeNodes();
+  }
+});
+
+const SELECTORS_TO_CUSTOMIZE = [
+  ".yamb-message-user__name",
+  ".yamb-chat-list-item__name",
+  ".yamb-text.yamb-text_leading.yamb-text-container",
+  ".yamb-chat-list-item__author",
+];
+
+function customizeNodes() {
+  SELECTORS_TO_CUSTOMIZE.forEach(selector => {
+    const nodes = document.querySelectorAll(selector);
+    nodes.forEach(node => {
+      customizeNodeWithUser(JSON.parse(localStorage.getItem("users-customization")) || [], node);
+    });
+  });
+}
+
+customizeNodes();
+
 /** Наблюдатель за DOM-ом */
 const observer = new MutationObserver(mutationRecords => {
   mutationRecords.forEach(mutation => {
     const addedNodes = [...mutation.addedNodes];
+
+    if (
+      isAddedNodesContainsMessage(addedNodes) ||
+      isAddedNodesContainsChat(addedNodes) ||
+      isAddedNodesContainsChatTitle(addedNodes)
+    ) {
+      customizeNodes();
+    }
 
     // Кастомизация внутри чата
     if (isAddedNodesContainsMessage(addedNodes)) {
@@ -81,7 +62,10 @@ const observer = new MutationObserver(mutationRecords => {
         const nameNode = node.querySelector(".yamb-message-user__name");
 
         if (nameNode) {
-          customizeNodeWithUser(USERS, nameNode);
+          customizeNodeWithUser(
+            JSON.parse(localStorage.getItem("users-customization")) || [],
+            nameNode
+          );
         }
       });
     }
@@ -92,32 +76,26 @@ const observer = new MutationObserver(mutationRecords => {
         const nameNode = node.querySelector(".yamb-chat-list-item__name");
 
         if (nameNode) {
-          customizeNodeWithUser(USERS, nameNode);
+          customizeNodeWithUser(
+            JSON.parse(localStorage.getItem("users-customization")) || [],
+            nameNode
+          );
         }
       });
     }
 
-    // Кастомизация настроек
-    if (isAddedNodesContainsUiSettings(addedNodes)) {
+    // Кастомизация тайтла чата
+    if (isAddedNodesContainsChatTitle(addedNodes)) {
+      console.log("title");
       addedNodes.forEach(node => {
-        const settingsNodes = Array.from(node.querySelectorAll(".ui-list-item__text"));
-        const uiSettingNode = settingsNodes.find(node => node.textContent.includes("Тема"));
-        const uiBlockNode = uiSettingNode.closest(".ui-entity-block");
+        const nameNode = node.querySelector(".yamb-text.yamb-text_leading.yamb-text-container");
 
-        const pluginSettingNode = document.createElement("duv");
-        pluginSettingNode.classList.add(
-          "ui-entity-block",
-          "ui-list-item",
-          "ui-list-item_pressable"
-        );
-        pluginSettingNode.textContent = "Кастомизация ников";
-        pluginSettingNode.style.fontWeight = "500";
-        pluginSettingNode.addEventListener("click", () => showUsersPanel(pluginSettingNode));
-
-        uiBlockNode.after(pluginSettingNode);
-
-        // const nameNode = node.querySelector(".ui-entity-block.ui-list-item");
-        // nameNode.style.color = "red !important";
+        if (nameNode) {
+          customizeNodeWithUser(
+            JSON.parse(localStorage.getItem("users-customization")) || [],
+            nameNode
+          );
+        }
       });
     }
   });
@@ -144,13 +122,12 @@ function isAddedNodesContainsChat(addedNodes) {
 }
 
 /**
- * Содержит ли добавленная на страницу нода блок настроек интерфейса
+ * Содержит ли добавленная на страницу нода имя чата (человека)
  * @param {Node[]} addedNodes массив добавленных на страницу нод
  * @returns {boolean}
  */
-function isAddedNodesContainsUiSettings(addedNodes) {
-  // return addedNodes.find(node => node.classList && node.classList.contains("yamb-modal-panel"));
-  return addedNodes.find(node => node.getAttribute("role") === "dialog");
+function isAddedNodesContainsChatTitle(addedNodes) {
+  return addedNodes.find(node => node.classList && node.classList.contains("yamb-chat"));
 }
 
 /**
@@ -161,27 +138,21 @@ function isAddedNodesContainsUiSettings(addedNodes) {
 function customizeNodeWithUser(users, node) {
   const text = node.innerText;
 
+  let notMeeted = true;
   users.forEach(user => {
     if (text.includes(user.name)) {
       node.style.cssText = `
         color: ${user.color};
         --after: "${user.after}";
       `;
+
+      notMeeted = false;
     }
   });
-}
 
-function showUsersPanel(pluginSettingNode) {
-  const usersPanel = document.createElement("div");
-  usersPanel.classList.add("ui-entity-block", "ui-list-item");
-  usersPanel.textContent = "Panel";
-  usersPanel.id = "users-customization";
-
-  const script = document.createElement("script");
-  script.src = "./users-ui/dist/assets/index-669683f6.js";
-  usersPanel.append(script);
-
-  pluginSettingNode.after(usersPanel);
+  if (notMeeted) {
+    node.style.cssText = ``;
+  }
 }
 
 /** Прикрепляем нашего наблюдателя к корню приложения */

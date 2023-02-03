@@ -9,10 +9,10 @@
         "https://yandex.ru/*"
       ],
       "js": [
-        "src/main.js"
+        "src/main/main.js"
       ],
       "css": [
-        "src/style.css"
+        "src/main/style.css"
       ]
     }
   ],
@@ -20,6 +20,6 @@
     "storage"
   ],
   "browser_action": {
-    "default_popup": "src/popup/popup.html"
+    "default_popup": "src/users-ui/dist/index.html"
   }
 }
